@@ -1,7 +1,11 @@
 import requests as rq
+import urllib3
 import os
 
-# Create data/raw directory if it doesn't exist
+urllib3.disable_warnings(
+    urllib3.exceptions.InsecureRequestWarning
+)
+
 os.makedirs("data/raw", exist_ok=True)
 
 files = {
@@ -13,36 +17,24 @@ files = {
     "PAIS.csv": "https://balanca.economia.gov.br/balanca/bd/tabelas/PAIS.csv"
 }
 
-print("Starting downloads...\n")
-
 for filename, url in files.items():
 
     filepath = f"data/raw/{filename}"
 
-    # Skip download if file already exists
-    if os.path.exists(filepath):
-        print(f"✓ {filename} already exists. Skipping.")
-        continue
-
     print(f"Downloading {filename}...")
 
-    try:
+    response = rq.get(
+        url,
+        stream=True,
+        timeout=60,
+        verify=False
+    )
 
-        response = rq.get(url, stream=True, timeout=60)
-        response.raise_for_status()
+    response.raise_for_status()
 
-        with open(filepath, "wb") as file:
+    with open(filepath, "wb") as file:
+        for chunk in response.iter_content(chunk_size=8192):
+            if chunk:
+                file.write(chunk)
 
-            for chunk in response.iter_content(chunk_size=8192):
-
-                if chunk:
-                    file.write(chunk)
-
-        print(f"✓ {filename} downloaded successfully.\n")
-
-    except rq.exceptions.RequestException as error:
-
-        print(f"✗ Error downloading {filename}")
-        print(f"  {error}\n")
-
-print("Download process finished.")
+    print(f"{filename} downloaded successfully!")
