@@ -27,7 +27,9 @@ files = {
 for filename, url in files.items():
 
     filepath = f"data/raw/{filename}"
-
+    if os.path.exists(filepath):
+        print(f"{filename} already downloaded!")
+        continue
     print(f"Downloading {filename}...")
 
     response = rq.get(
@@ -55,103 +57,111 @@ print("\nNow the program will clean and organize the downloaded data. Please wai
 
 os.makedirs('data/processed', exist_ok=True)
 
+processed_files = {"EXP_2022.csv", "EXP_2025.csv", "IMP_2022.csv", "IMP_2025.csv"}
+for filename in processed_files:
+    filepath = f"data/processed/{filename}"
+    if os.path.exists(filepath):
+        print(f"{filename} already cleaned and organized!")
+        continue
 
-# 2022 EXPORTATION
+    # 2022 EXPORTATION
 
-df = pd.read_csv('data/raw/EXP_2022.csv', sep=";")
-df = df.drop(columns=['CO_UNID', 'SG_UF_NCM', 'CO_URF', 'CO_VIA', 'QT_ESTAT', 'KG_LIQUIDO'])
+    df = pd.read_csv('data/raw/EXP_2022.csv', sep=";")
+    df = df.drop(columns=['CO_UNID', 'SG_UF_NCM', 'CO_URF', 'CO_VIA', 'QT_ESTAT', 'KG_LIQUIDO'])
 
-df_country = pd.read_csv('data/raw/PAIS.csv', sep=";", encoding='latin1')
-df_country = df_country.drop(columns=['CO_PAIS_ISON3', 'CO_PAIS_ISOA3', 'NO_PAIS', 'NO_PAIS_ESP'])
+    df_country = pd.read_csv('data/raw/PAIS.csv', sep=";", encoding='latin1')
+    df_country = df_country.drop(columns=['CO_PAIS_ISON3', 'CO_PAIS_ISOA3', 'NO_PAIS', 'NO_PAIS_ESP'])
 
-df = df.merge(df_country, on='CO_PAIS', how='left')
-df = df.drop(columns=['CO_PAIS'])
+    df = df.merge(df_country, on='CO_PAIS', how='left')
+    df = df.drop(columns=['CO_PAIS'])
 
-df_ncm = pd.read_csv('data/raw/NCM.csv', sep=";", encoding='latin1')
-df_ncm = df_ncm.drop(columns=['CO_UNID','CO_SH6','CO_PPE','CO_PPI','CO_FAT_AGREG','CO_CUCI_ITEM','CO_CGCE_N3','CO_SIIT','CO_ISIC_CLASSE','CO_EXP_SUBSET', 'NO_NCM_POR','NO_NCM_ESP'])
-df = df.merge(df_ncm, on='CO_NCM', how='left')
-
-
-df = df.rename(columns={'CO_ANO':'Year', 'CO_MES':'Month', 'CO_NCM':'NCM', 'VL_FOB':'Valor USD', 'NO_PAIS_ING':'Country', 'NO_NCM_ING' : 'NCM Description'})
-df = df[['Year', 'Country', 'Month', 'Valor USD', 'NCM Description', 'NCM']]
-df = df.sort_values('Country')
-
-df.to_csv('data/processed/exp_2022.csv', index=False)
-
-print("Exportations from 2022 saved and ready!")
-
-#2025 EXPORTATION
-
-df = pd.read_csv('data/raw/EXP_2025.csv', sep=";")
-df = df.drop(columns=['CO_UNID', 'SG_UF_NCM', 'CO_URF', 'CO_VIA', 'QT_ESTAT', 'KG_LIQUIDO'])
-
-df_country = pd.read_csv('data/raw/PAIS.csv', sep=";", encoding='latin1')
-df_country = df_country.drop(columns=['CO_PAIS_ISON3', 'CO_PAIS_ISOA3', 'NO_PAIS', 'NO_PAIS_ESP'])
-
-df = df.merge(df_country, on='CO_PAIS', how='left')
-df = df.drop(columns=['CO_PAIS'])
-
-df_ncm = pd.read_csv('data/raw/NCM.csv', sep=";", encoding='latin1')
-df_ncm = df_ncm.drop(columns=['CO_UNID','CO_SH6','CO_PPE','CO_PPI','CO_FAT_AGREG','CO_CUCI_ITEM','CO_CGCE_N3','CO_SIIT','CO_ISIC_CLASSE','CO_EXP_SUBSET', 'NO_NCM_POR','NO_NCM_ESP'])
-df = df.merge(df_ncm, on='CO_NCM', how='left')
+    df_ncm = pd.read_csv('data/raw/NCM.csv', sep=";", encoding='latin1')
+    df_ncm = df_ncm.drop(columns=['CO_UNID','CO_SH6','CO_PPE','CO_PPI','CO_FAT_AGREG','CO_CUCI_ITEM','CO_CGCE_N3','CO_SIIT','CO_ISIC_CLASSE','CO_EXP_SUBSET', 'NO_NCM_POR','NO_NCM_ESP'])
+    df = df.merge(df_ncm, on='CO_NCM', how='left')
 
 
-df = df.rename(columns={'CO_ANO':'Year', 'CO_MES':'Month', 'CO_NCM':'NCM', 'VL_FOB':'Valor USD', 'NO_PAIS_ING':'Country', 'NO_NCM_ING' : 'NCM Description'})
-df = df[['Year', 'Country', 'Month', 'Valor USD', 'NCM Description', 'NCM']]
-df = df.sort_values('Country')
+    df = df.rename(columns={'CO_ANO':'Year', 'CO_MES':'Month', 'CO_NCM':'NCM', 'VL_FOB':'Valor USD', 'NO_PAIS_ING':'Country', 'NO_NCM_ING' : 'NCM Description'})
+    df = df[['Year', 'Country', 'Month', 'Valor USD', 'NCM Description', 'NCM']]
+    df = df.sort_values('Country')
 
-df.to_csv('data/processed/exp_2025.csv', index=False)
+    df.to_csv('data/processed/EXP_2022.csv', index=False)
 
-print("Exportations from 2025 saved and ready!")
+    print("Exportations from 2022 saved and ready!")
 
+    #2025 EXPORTATION
 
-#2022 IMPORTATION
+    df = pd.read_csv('data/raw/EXP_2025.csv', sep=";")
+    df = df.drop(columns=['CO_UNID', 'SG_UF_NCM', 'CO_URF', 'CO_VIA', 'QT_ESTAT', 'KG_LIQUIDO'])
 
-df = pd.read_csv('data/raw/IMP_2022.csv', sep=";")
-df = df.drop(columns=['CO_UNID', 'SG_UF_NCM', 'CO_URF', 'CO_VIA', 'QT_ESTAT', 'KG_LIQUIDO'])
+    df_country = pd.read_csv('data/raw/PAIS.csv', sep=";", encoding='latin1')
+    df_country = df_country.drop(columns=['CO_PAIS_ISON3', 'CO_PAIS_ISOA3', 'NO_PAIS', 'NO_PAIS_ESP'])
 
-df_country = pd.read_csv('data/raw/PAIS.csv', sep=";", encoding='latin1')
-df_country = df_country.drop(columns=['CO_PAIS_ISON3', 'CO_PAIS_ISOA3', 'NO_PAIS', 'NO_PAIS_ESP'])
+    df = df.merge(df_country, on='CO_PAIS', how='left')
+    df = df.drop(columns=['CO_PAIS'])
 
-df = df.merge(df_country, on='CO_PAIS', how='left')
-df = df.drop(columns=['CO_PAIS'])
-
-df_ncm = pd.read_csv('data/raw/NCM.csv', sep=";", encoding='latin1')
-df_ncm = df_ncm.drop(columns=['CO_UNID','CO_SH6','CO_PPE','CO_PPI','CO_FAT_AGREG','CO_CUCI_ITEM','CO_CGCE_N3','CO_SIIT','CO_ISIC_CLASSE','CO_EXP_SUBSET', 'NO_NCM_POR','NO_NCM_ESP'])
-df = df.merge(df_ncm, on='CO_NCM', how='left')
-
-
-df = df.rename(columns={'CO_ANO':'Year', 'CO_MES':'Month', 'CO_NCM':'NCM', 'VL_FOB':'Valor USD', 'NO_PAIS_ING':'Country', 'NO_NCM_ING' : 'NCM Description'})
-df = df[['Year', 'Country', 'Month', 'Valor USD', 'NCM Description', 'NCM']]
-df = df.sort_values('Country')
-
-df.to_csv('data/processed/imp_2022.csv', index=False)
-
-print("Importations from 2022 saved and ready!")
-
-#2025 IMPORTATION
-
-df = pd.read_csv('data/raw/IMP_2025.csv', sep=";")
-df = df.drop(columns=['CO_UNID', 'SG_UF_NCM', 'CO_URF', 'CO_VIA', 'QT_ESTAT', 'KG_LIQUIDO'])
-
-df_country = pd.read_csv('data/raw/PAIS.csv', sep=";", encoding='latin1')
-df_country = df_country.drop(columns=['CO_PAIS_ISON3', 'CO_PAIS_ISOA3', 'NO_PAIS', 'NO_PAIS_ESP'])
-
-df = df.merge(df_country, on='CO_PAIS', how='left')
-df = df.drop(columns=['CO_PAIS'])
-
-df_ncm = pd.read_csv('data/raw/NCM.csv', sep=";", encoding='latin1')
-df_ncm = df_ncm.drop(columns=['CO_UNID','CO_SH6','CO_PPE','CO_PPI','CO_FAT_AGREG','CO_CUCI_ITEM','CO_CGCE_N3','CO_SIIT','CO_ISIC_CLASSE','CO_EXP_SUBSET', 'NO_NCM_POR','NO_NCM_ESP'])
-df = df.merge(df_ncm, on='CO_NCM', how='left')
+    df_ncm = pd.read_csv('data/raw/NCM.csv', sep=";", encoding='latin1')
+    df_ncm = df_ncm.drop(columns=['CO_UNID','CO_SH6','CO_PPE','CO_PPI','CO_FAT_AGREG','CO_CUCI_ITEM','CO_CGCE_N3','CO_SIIT','CO_ISIC_CLASSE','CO_EXP_SUBSET', 'NO_NCM_POR','NO_NCM_ESP'])
+    df = df.merge(df_ncm, on='CO_NCM', how='left')
 
 
-df = df.rename(columns={'CO_ANO':'Year', 'CO_MES':'Month', 'CO_NCM':'NCM', 'VL_FOB':'Valor USD', 'NO_PAIS_ING':'Country', 'NO_NCM_ING' : 'NCM Description'})
-df = df[['Year', 'Country', 'Month', 'Valor USD', 'NCM Description', 'NCM']]
-df = df.sort_values('Country')
+    df = df.rename(columns={'CO_ANO':'Year', 'CO_MES':'Month', 'CO_NCM':'NCM', 'VL_FOB':'Valor USD', 'NO_PAIS_ING':'Country', 'NO_NCM_ING' : 'NCM Description'})
+    df = df[['Year', 'Country', 'Month', 'Valor USD', 'NCM Description', 'NCM']]
+    df = df.sort_values('Country')
 
-df.to_csv('data/processed/imp_2025.csv', index=False)
+    df.to_csv('data/processed/EXP_2025.csv', index=False)
 
-print("Importations from 2025 saved and ready!" + "\nThe data is ready to be analized! Enjoy it :D")
+    print("Exportations from 2025 saved and ready!")
+
+
+    #2022 IMPORTATION
+
+    df = pd.read_csv('data/raw/IMP_2022.csv', sep=";")
+    df = df.drop(columns=['CO_UNID', 'SG_UF_NCM', 'CO_URF', 'CO_VIA', 'QT_ESTAT', 'KG_LIQUIDO'])
+
+    df_country = pd.read_csv('data/raw/PAIS.csv', sep=";", encoding='latin1')
+    df_country = df_country.drop(columns=['CO_PAIS_ISON3', 'CO_PAIS_ISOA3', 'NO_PAIS', 'NO_PAIS_ESP'])
+
+    df = df.merge(df_country, on='CO_PAIS', how='left')
+    df = df.drop(columns=['CO_PAIS'])
+
+    df_ncm = pd.read_csv('data/raw/NCM.csv', sep=";", encoding='latin1')
+    df_ncm = df_ncm.drop(columns=['CO_UNID','CO_SH6','CO_PPE','CO_PPI','CO_FAT_AGREG','CO_CUCI_ITEM','CO_CGCE_N3','CO_SIIT','CO_ISIC_CLASSE','CO_EXP_SUBSET', 'NO_NCM_POR','NO_NCM_ESP'])
+    df = df.merge(df_ncm, on='CO_NCM', how='left')
+
+
+    df = df.rename(columns={'CO_ANO':'Year', 'CO_MES':'Month', 'CO_NCM':'NCM', 'VL_FOB':'Valor USD', 'NO_PAIS_ING':'Country', 'NO_NCM_ING' : 'NCM Description'})
+    df = df[['Year', 'Country', 'Month', 'Valor USD', 'NCM Description', 'NCM']]
+    df = df.sort_values('Country')
+
+    df.to_csv('data/processed/IMP_2022.csv', index=False)
+
+    print("Importations from 2022 saved and ready!")
+
+    #2025 IMPORTATION
+
+    df = pd.read_csv('data/raw/IMP_2025.csv', sep=";")
+    df = df.drop(columns=['CO_UNID', 'SG_UF_NCM', 'CO_URF', 'CO_VIA', 'QT_ESTAT', 'KG_LIQUIDO'])
+
+    df_country = pd.read_csv('data/raw/PAIS.csv', sep=";", encoding='latin1')
+    df_country = df_country.drop(columns=['CO_PAIS_ISON3', 'CO_PAIS_ISOA3', 'NO_PAIS', 'NO_PAIS_ESP'])
+
+    df = df.merge(df_country, on='CO_PAIS', how='left')
+    df = df.drop(columns=['CO_PAIS'])
+
+    df_ncm = pd.read_csv('data/raw/NCM.csv', sep=";", encoding='latin1')
+    df_ncm = df_ncm.drop(columns=['CO_UNID','CO_SH6','CO_PPE','CO_PPI','CO_FAT_AGREG','CO_CUCI_ITEM','CO_CGCE_N3','CO_SIIT','CO_ISIC_CLASSE','CO_EXP_SUBSET', 'NO_NCM_POR','NO_NCM_ESP'])
+    df = df.merge(df_ncm, on='CO_NCM', how='left')
+
+
+    df = df.rename(columns={'CO_ANO':'Year', 'CO_MES':'Month', 'CO_NCM':'NCM', 'VL_FOB':'Valor USD', 'NO_PAIS_ING':'Country', 'NO_NCM_ING' : 'NCM Description'})
+    df = df[['Year', 'Country', 'Month', 'Valor USD', 'NCM Description', 'NCM']]
+    df = df.sort_values('Country')
+
+    df.to_csv('data/processed/IMP_2025.csv', index=False)
+
+    print("Importations from 2025 saved and ready!")
+
+print("\nThe data is ready to be analized! Enjoy it :D")
 
 
 #OPERATIONS PROGRAM
@@ -174,15 +184,15 @@ while True:
         year = input("Enter the year you want to research 2022 or 2025: ")
         if year == '2022':
             if operation == 'export':
-                df = pd.read_csv('data/processed/exp_2022.csv')            
+                df = pd.read_csv('data/processed/EXP_2022.csv')            
             else:
-               df = pd.read_csv('data/processed/imp_2022.csv')
+               df = pd.read_csv('data/processed/IMP_2022.csv')
             break
         elif year == '2025':
             if operation == 'export':
-                df = pd.read_csv('data/processed/exp_2025.csv')            
+                df = pd.read_csv('data/processed/EXP_2025.csv')            
             else:
-               df = pd.read_csv('data/processed/imp_2025.csv')
+               df = pd.read_csv('data/processed/IMP_2025.csv')
             break        
         
         print("Year not found. Try again!")
