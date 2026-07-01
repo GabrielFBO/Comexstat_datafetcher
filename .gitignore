@@ -1,6 +1,7 @@
 venv/
 __pycache__/
 data
+results
 sketch_operation.py
 next_version.py
 *.pyc
