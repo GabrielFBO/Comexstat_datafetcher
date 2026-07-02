@@ -114,7 +114,7 @@ The program will guide you through the following steps:
 
 Official ComexStat database provided by the Brazilian Government.
 
-https://balanca.economia.gov.br/balanca/bd/comexstat-bd/
+https://comexstat.mdic.gov.br/pt/home
 
 ---
 
