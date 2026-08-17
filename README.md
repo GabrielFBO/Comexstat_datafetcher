@@ -1,4 +1,4 @@
-# ComexStat Data Fetcher
+# ComexBR Data Fetcher
 
 A Python application for downloading, processing, analyzing, and exporting Brazilian foreign trade data from the official ComexStat database.
 
