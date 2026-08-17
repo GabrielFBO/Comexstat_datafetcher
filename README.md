@@ -10,13 +10,12 @@ The application allows users to search import and export data by country, genera
 
 - Download official ComexStat datasets automatically
 - Process raw CSV files into clean datasets
-- Search trade data by country
+- Search trade data by year, operation and country
 - Support for:
   - Export operations
   - Import operations
 - Available years:
-  - 2022
-  - 2025
+  - 2022 to 2026
 - Generate Top 10 products charts
   - Vertical Bar Chart
   - Horizontal Bar Chart
@@ -25,16 +24,15 @@ The application allows users to search import and export data by country, genera
   - CSV
   - Excel (.xlsx)
   - JSON
+  
+  ## Version 2.0 features
 
----
-
-## Technologies
-
-- Python 3
-- Pandas
-- Matplotlib
-- Requests
-- OpenPyXL
+  - GUI from customtkinter
+  - Added support for data from years 2023, 2024 and 2026
+  - Improve user interface and experience
+  - Charts bugs corrected
+  - Autocomplete on the country search tab
+  - Total US$ value in the search results tab
 
 ---
 
@@ -64,7 +62,7 @@ Clone the repository:
 
 ```bash
 git clone https://github.com/GabrielFBO/ComexStat_DataFetcher.git
-cd ComexStat_DataFetcher
+cd ComexBR_DataFetcher
 ```
 
 Create a virtual environment:
@@ -101,12 +99,13 @@ python main.py
 
 The program will guide you through the following steps:
 
-1. Select the operation (Export or Import)
-2. Select the year
+1. Download the required data files from the source (if not already downloaded).
+2. Select the operation and year
 3. Enter the country name
 4. Display the results
-5. Optionally generate charts
-6. Optionally export the data
+5. Optionally export the data to CSV, Excel or JSON
+6. Choose the chart style
+7. Optionally export the chart as an image file
 
 ---
 
@@ -120,38 +119,20 @@ https://comexstat.mdic.gov.br/pt/home
 
 ## Example
 
-Example search:
-
-```
-Operation:
-Export
-
-Year:
-2025
-
-Country:
-Japan
-```
-
-Output:
-
-- All exported products to Japan
-- Total USD value
-- Top 10 products chart
-- Export to CSV / Excel / JSON
+![alt text](images/data.png)
+![alt text](images/search.png)
+![alt text](images/results.png)
+![alt text](images/chart.png)
 
 ---
 
 ## Future Improvements
 
-- Support for additional years
-- Country list auto-complete
 - Search by NCM code
 - Search by product description
 - Interactive dashboard
-- Streamlit web interface
-- Better error handling
-- Automatic update checker
+- Language options
+- Custom your charts (colors, size, etc.)
 
 ---
 
